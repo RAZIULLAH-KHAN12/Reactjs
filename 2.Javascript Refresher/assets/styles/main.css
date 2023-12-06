@@ -1,0 +1,35 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: black;
+    width:80%;
+    margin: auto;
+}
+header{
+    color: yellow;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+h1{
+    text-align: center;
+    margin: 10px;
+}
+img{
+    height: 40px;
+    width: 35px;
+    margin: 5px;
+}
+ul {
+    color: white;
+    text-align: center;
+    list-style-type: none;
+
+}
+li{
+    margin: 8px;
+}
