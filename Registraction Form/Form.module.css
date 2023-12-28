@@ -1,0 +1,72 @@
+.Frag {
+ text-align: center;
+}
+.form {
+  /* width: 450px; */
+  margin: 3rem;
+  display: flex;
+  /* justify-content: center; */
+
+  align-items: end;
+  flex-direction: column;
+  border: 1px solid black;
+  border-radius: 12px;
+  background-color: #f0f0f0;
+}
+
+.lbl{
+  margin-right: 10px;
+}
+.ip{
+  /* margin-right: 10px; */
+  margin-left: 6px;
+  height: auto;
+  /* border: 1px solid black; */
+}
+
+.c{
+  height:28px;
+  width: 212px;
+}
+
+.inp {
+  margin: 1rem;
+  margin-right: 10px;
+
+  display: flex;
+}
+
+.btn > button{
+    margin: 1rem;
+    padding: 0.3rem;
+}
+
+.iconinput{
+  margin-left: 10px;
+  border: 1px solid black;
+  border-radius: 4px;
+  height: 30px;
+}
+.iconi{
+  border: none;
+  margin-left: 6px;
+}
+
+.calicon{
+  margin-right: 5px;
+  margin-left: 6px;
+}
+
+.sub{
+    color: white;
+    background-color: green;
+}
+
+.can{
+    color: white;
+    background-color: Grey;
+}
+
+.err{
+  color: Red;
+}
