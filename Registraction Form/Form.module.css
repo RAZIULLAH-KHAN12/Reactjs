@@ -1,72 +1,183 @@
-.Frag {
- text-align: center;
-}
-.form {
-  /* width: 450px; */
-  margin: 3rem;
+.Container {
+  text-align: center;
+  border: 1px solid green;
   display: flex;
-  /* justify-content: center; */
-
-  align-items: end;
   flex-direction: column;
-  border: 1px solid black;
-  border-radius: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+.Form {
   background-color: #f0f0f0;
-}
-
-.lbl{
-  margin-right: 10px;
-}
-.ip{
-  /* margin-right: 10px; */
-  margin-left: 6px;
-  height: auto;
-  /* border: 1px solid black; */
-}
-
-.c{
-  height:28px;
-  width: 212px;
-}
-
-.inp {
-  margin: 1rem;
-  margin-right: 10px;
-
+  border: 1px solid #000;
+  border-radius: 12px;
+  flex-flow: column wrap;
+  place-content: stretch space-evenly;
+  align-items: end;
+  width: 427px;
+  height: 550px;
+  margin-top: 20px;
   display: flex;
+  padding-right: 20px;
+  padding-top: -30px;
+  padding-bottom: -30px;
+  overflow: hidden;
 }
 
-.btn > button{
-    margin: 1rem;
-    padding: 0.3rem;
+/* Input container styles  */
+.InputContainer {
+  display: flex;
+  flex-direction: center;
+  margin-bottom: -15px;
+  margin-top: -40px;
 }
 
-.iconinput{
+/* Label styles  */
+.Label {
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 20px;
+  margin-top: 2px;
+}
+
+.InputWrapper{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Icon input container styles  */
+.IconInput {
   margin-left: 10px;
   border: 1px solid black;
-  border-radius: 4px;
-  height: 30px;
+  display: flex;
+  align-items: center;
 }
-.iconi{
+
+/* Icon styles  */
+.Icon {
   border: none;
+  margin-left: 10px;
+  margin-right: 3px;
+}
+
+/*  Input styles  */
+.Input {
   margin-left: 6px;
+  height: 27px;
+  width: 200px;
 }
 
-.calicon{
-  margin-right: 5px;
-  margin-left: 6px;
+/* Error message styles */
+.Error {
+  color: red;
+  margin-top: 5px;
+  height: 20px;
+  overflow: hidden;
+  display: flex;
+  justify-content: flex-start;
+ /* margin-left: -60px; */
+ /* margin-right: -50px; */
 }
 
-.sub{
-    color: white;
-    background-color: green;
+/* .errorMsgFirstName{
+  margin-right: 0px;
+}
+.errorMsgMiddleName{
+  margin-right: 0px;
+}
+.errorMsgLastName{
+  margin-right: 15px;
+}
+.errorMsgEmail{
+  margin-right: 55px;
+}
+.errorMsgPhone{
+  margin-right: 25px;
+}
+.errorMsgDob {
+  margin-top: 3px;
+  /* padding-left: 20px; */
+  /* margin-right: 50px; */
+/* } */ 
+
+.errorMsgFirstName,
+.errorMsgMiddleName,
+.errorMsgLastName,
+.errorMsgEmail,
+.errorMsgPhone,
+.errorMsgDob {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 5px;
+  margin-right: 10px; 
 }
 
-.can{
-    color: white;
-    background-color: Grey;
+.errorMsgDob {
+  margin-right: 50px;
 }
 
-.err{
-  color: Red;
+/* Submit button styles  */
+.SubmitButton {
+  color: white;
+  background-color: green;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+/* Cancel button styles  */
+.CancelButton {
+  color: white;
+  background-color: grey;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Button container styles  */
+.ButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: -30px;
+}
+
+.TablePaper {
+  margin-top: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.TablePaper table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.TablePaper th,
+.TablePaper td {
+  border: 5px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.TablePaper th {
+  background-color: #f2f2f2;
+}
+
+.TablePaper td {
+  border-right: 5px solid #ddd;
+}
+
+.TablePaper button {
+  color: white;
+  background-color: green;
+  padding: 0.4rem;
+  border: 1px solid #ddd;
+  margin: 10px;
+  margin-top: -10px;
+  margin-bottom: -10px;
 }

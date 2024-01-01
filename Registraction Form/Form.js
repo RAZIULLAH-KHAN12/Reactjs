@@ -1,17 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import classes from "./Form.module.css";
-import { Fragment } from "react/cjs/react.production.min";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckSquare, faCoffee } from "@fortawesome/fontawesome-free-solid";
+import {
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Paper,
+} from "@mui/material";
 
 const Form = () => {
+  const [formDataList, setFormDataList] = useState([]);
+  const [serialNumber, setSerialNumber] = useState(1);
   const [fName, setFName] = useState("");
   const [mName, setMName] = useState("");
   const [lName, setLName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNo, setPhoneNo] = useState("");
   const [dob, setDob] = useState("");
-  const [formIsValid, setFormIsValid] = useState(true);
 
   const [fNameError, setFNameError] = useState("");
   const [mNameError, setMNameError] = useState("");
@@ -19,6 +28,30 @@ const Form = () => {
   const [emailError, setEmailError] = useState("");
   const [phoneNoError, setPhoneNoError] = useState("");
   const [dobError, setDobError] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  
+  // let isEditing = false;
+
+  const randomId = () => {
+    return Math.random().toString(36).substr(2, 9);
+  };
+
+  const editRowHandler = (index) => {
+    const editedRowData = formDataList[index];
+    setSerialNumber(editedRowData.serialNumber); // Update serialNumber state
+    setFName(editedRowData.fName);
+    setMName(editedRowData.mName);
+    setLName(editedRowData.lName);
+    setEmail(editedRowData.email);
+    setPhoneNo(editedRowData.phoneNo);
+    setDob(editedRowData.dob);
+    setIsEditing(true); //set user in editing mode
+  };
+
+  const deleteRowHandler = (index) => {
+    const updatedFormDataList = formDataList.filter((_, i) => i !== index);
+    setFormDataList(updatedFormDataList);
+  };
 
   const fNameHandler = (event) => {
     setFName(event.target.value);
@@ -33,20 +66,19 @@ const Form = () => {
     setEmail(event.target.value);
   };
   const phoneNoHandler = (event) => {
-    console.log(typeof event.target.value);
     setPhoneNo(event.target.value);
   };
   const dobHandler = (event) => {
     setDob(event.target.value);
   };
-  const resetForm = () => {
-    setFName(""),
-      setMName(""),
-      setLName(""),
-      setEmail(""),
-      setPhoneNo(""),
-      setDob(""),
-      setFormIsValid(true);
+
+  const resetForm1 = () => {
+    setFName("");
+    setMName("");
+    setLName("");
+    setEmail("");
+    setPhoneNo("");
+    setDob("");
 
     setFNameError("");
     setMNameError("");
@@ -56,11 +88,34 @@ const Form = () => {
     setDobError("");
   };
 
+  const resetForm = () => {
+    if (isEditing) {
+      const confirmCancel = window.confirm(
+        "Are you sure you want to cancel updating the existing row?"
+      );
+
+      if (confirmCancel) {
+        //OK
+        resetForm1();
+        setIsEditing(false); // Reset isEditing when canceling the edit
+      } else {
+        //CANCEL
+        alert("User is interested for editing row!");
+        // setIsEditing(false);
+      }
+    } else {
+      resetForm1();
+    }
+  };
+
   const validateForm = () => {
     let isValid = true;
 
     if (fName.trim().length === 0) {
       setFNameError("First Name is required");
+      isValid = false;
+    } else if (/\d/.test(fName)) {
+      setFNameError("First Name not contain numbers");
       isValid = false;
     } else {
       setFNameError("");
@@ -69,12 +124,18 @@ const Form = () => {
     if (mName.trim().length === 0) {
       setMNameError("Middle Name is required");
       isValid = false;
+    } else if (/\d/.test(mName)) {
+      setMNameError("Middle Name not contain numbers");
+      isValid = false;
     } else {
       setMNameError("");
     }
 
     if (lName.trim().length === 0) {
       setLNameError("Last Name is required");
+      isValid = false;
+    } else if (/\d/.test(lName)) {
+      setLNameError("Last Name not contain numbers");
       isValid = false;
     } else {
       setLNameError("");
@@ -86,18 +147,20 @@ const Form = () => {
     } else if (
       !email.includes("@") ||
       email.indexOf("@") === 0 ||
-      email.indexOf("@") === email.length - 1
+      email.indexOf("@") === email.length - 1 ||
+      !/\.[a-zA-Z]+$/.test(email)
     ) {
       setEmailError("Invalid Email");
+      isValid = false;
     } else {
       setEmailError("");
     }
 
     if (phoneNo.trim().length === 0) {
-      setPhoneNoError("Phone Number is required");
+      setPhoneNoError("PhoneNo is required");
       isValid = false;
     } else if (phoneNo.trim().length > 0 && phoneNo.trim().length !== 10) {
-      setPhoneNoError("Please Enter Phone number exact 10 digits");
+      setPhoneNoError("Enter PhoneNo exact 10 digits");
       isValid = false;
     } else {
       setPhoneNoError("");
@@ -119,22 +182,9 @@ const Form = () => {
       return;
     }
 
-    // if (
-    //   fName.trim().length === 0 ||
-    //   mName.trim().length === 0 ||
-    //   lName.trim().length === 0 ||
-    //   email.trim().length === 0 ||
-    //   phoneNo.trim().length === 0 ||
-    //   dob.trim().length === 0
-    // ) {
-    //   setFormIsValid(false);
-    //   return;
-    // } else if (!email.includes('@') || email.indexOf('@') === 0 || email.indexOf('@') === email.length - 1) {
-    //   setFormIsValid(false);
-    //   return;
-    // }
-
-    const formData = {
+    const newFormData = {
+      id: randomId(),
+      serialNumber,
       fName,
       mName,
       lName,
@@ -143,132 +193,238 @@ const Form = () => {
       dob,
     };
 
-    localStorage.setItem("formData", JSON.stringify(formData));
-    resetForm();
+    // Check if there's an existing record with the same serialNumber
+    const existingIndex = formDataList.findIndex(
+      (data) => data.serialNumber === serialNumber
+    );
+
+    if (existingIndex !== -1) {
+      // Update existing record
+      const updatedFormDataList = [...formDataList];
+      updatedFormDataList[existingIndex] = newFormData;
+      setFormDataList(updatedFormDataList);
+    } else {
+      // Add new record
+      setFormDataList((prevFormDataList) => [...prevFormDataList, newFormData]);
+      setSerialNumber((prevSerialNumber) => prevSerialNumber + 1);
+    }
+
+    resetForm1();
   };
+
   return (
-    <div className={classes.Frag}>
-      {!formIsValid && <p className={classes.err}>Please Check Your Form</p>}
-      <form className={classes.form} onSubmit={submitHandler}>
-        <div className={classes.inp}>
-          <label htmlFor="fName" className={classes.lbl}>
+    <div className={classes.Container}>
+      <form className={classes.Form} onSubmit={submitHandler}>
+        <div className={classes.InputContainer}>
+          <label htmlFor="fName" className={classes.Label}>
             First Name
           </label>
-          <div className={classes.iconinput}>
-          <FontAwesomeIcon className={classes.iconi} icon="fa-solid fa-user" />
-          <input
-            className={classes.ip}
-            id="fName"
-            value={fName}
-            type="text"
-            placeholder="Enter your first name"
-            onChange={fNameHandler}
-          ></input>
+          <div className={classes.InputWrapper}>
+            <div className={classes.IconInput}>
+              <FontAwesomeIcon
+                className={classes.Icon}
+                icon="fa-solid fa-user"
+              />
+              <input
+                className={classes.Input}
+                id="fName"
+                value={fName}
+                type="text"
+                placeholder="Enter your first name"
+                onChange={fNameHandler}
+              ></input>
+            </div>
+            {fNameError && (
+              <p className={`${classes.Error} ${classes.errorMsgFirstName}`}>
+                {fNameError}
+              </p>
+            )}
           </div>
-          
-          {fNameError && <p className={classes.err}>{fNameError}</p>}
         </div>
 
-        <div className={classes.inp}>
-          <label htmlFor="mName" className={classes.lbl}>
+        <div className={classes.InputContainer}>
+          <label htmlFor="mName" className={classes.Label}>
             Middle Name
           </label>
-          <div className={classes.iconinput}>
-          <FontAwesomeIcon className={classes.iconi} icon="fa-solid fa-user" />
-          <input
-            className={classes.ip}
-            id="mName"
-            value={mName}
-            type="text"
-            placeholder="Enter your middle name"
-            onChange={mNameHandler}
-          ></input>
+          <div className={classes.InputWrapper}>
+            <div className={classes.IconInput}>
+              <FontAwesomeIcon
+                className={classes.Icon}
+                icon="fa-solid fa-user"
+              />
+              <input
+                className={classes.Input}
+                id="mName"
+                value={mName}
+                type="text"
+                placeholder="Enter your middle name"
+                onChange={mNameHandler}
+              ></input>
+            </div>
+            {mNameError && (
+              <p className={`${classes.Error} ${classes.errorMsgMiddleName}`}>
+                {mNameError}
+              </p>
+            )}
           </div>
-          {mNameError && <p className={classes.err}>{mNameError}</p>}
         </div>
 
-        <div className={classes.inp}>
-          <label htmlFor="lName" className={classes.lbl}>
+        <div className={classes.InputContainer}>
+          <label htmlFor="lName" className={classes.Label}>
             Last Name
           </label>
-          <div className={classes.iconinput}>
-          <FontAwesomeIcon className={classes.iconi} icon="fa-solid fa-user" />
-          <input
-            className={classes.ip}
-            id="lName"
-            value={lName}
-            type="text"
-            placeholder="Enter your last name"
-            onChange={lNameHandler}
-          ></input>
+          <div className={classes.InputWrapper}>
+            <div className={classes.IconInput}>
+              <FontAwesomeIcon
+                className={classes.Icon}
+                icon="fa-solid fa-user"
+              />
+              <input
+                className={classes.Input}
+                id="lName"
+                value={lName}
+                type="text"
+                placeholder="Enter your last name"
+                onChange={lNameHandler}
+              ></input>
+            </div>
+            {lNameError && (
+              <p className={`${classes.Error} ${classes.errorMsgLastName}`}>
+                {lNameError}
+              </p>
+            )}
           </div>
-          {lNameError && <p className={classes.err}>{lNameError}</p>}
         </div>
 
-        <div className={classes.inp}>
-          <label htmlFor="email" className={classes.lbl}>
+        <div className={classes.InputContainer}>
+          <label htmlFor="email" className={classes.Label}>
             Email
           </label>
-          <div className={classes.iconinput}>
-          <FontAwesomeIcon className={classes.iconi} icon="fa-solid fa-envelope" />
-          <input
-            className={classes.ip}
-            id="email"
-            value={email}
-            type="text"
-            placeholder="Enter yorr email"
-            onChange={emailHandler}
-            autoComplete="email"
-          ></input>
+          <div className={classes.InputWrapper}>
+            <div className={classes.IconInput}>
+              <FontAwesomeIcon
+                className={classes.Icon}
+                icon="fa-solid fa-envelope"
+              />
+              <input
+                className={classes.Input}
+                id="email"
+                value={email}
+                type="text"
+                placeholder="Enter yorr email"
+                onChange={emailHandler}
+                autoComplete="email"
+              ></input>
+            </div>
+            {emailError && (
+              <p className={`${classes.Error} ${classes.errorMsgEmail}`}>
+                {emailError}
+              </p>
+            )}
           </div>
-          {emailError && <p className={classes.err}>{emailError}</p>}
         </div>
 
-        <div className={classes.inp}>
-          <label htmlFor="phoneNo" className={classes.lbl}>
-            Phone Number
+        <div className={classes.InputContainer}>
+          <label htmlFor="phoneNo" className={classes.Label}>
+            PhoneNo
           </label>
-          <div className={classes.iconinput}>
-          <FontAwesomeIcon className={classes.iconi} icon="fa-solid fa-phone" />
-          <input
-            className={classes.ip}
-            id="phoneNo"
-            value={phoneNo}
-            type="number"
-            placeholder="Enter your phone number"
-            onChange={phoneNoHandler}
-          ></input>
+          <div className={classes.InputWrapper}>
+            <div className={classes.IconInput}>
+              <FontAwesomeIcon
+                className={classes.Icon}
+                icon="fa-solid fa-phone"
+              />
+              <input
+                className={classes.Input}
+                id="phoneNo"
+                value={phoneNo}
+                type="number"
+                placeholder="Enter your phone number"
+                onChange={phoneNoHandler}
+              ></input>
+            </div>
+            {phoneNoError && (
+              <p className={`${classes.Error} ${classes.errorMsgPhone}`}>
+                {phoneNoError}
+              </p>
+            )}
           </div>
-          {phoneNoError && <p className={classes.err}>{phoneNoError}</p>}
-        </div>
-        
-        <div className={classes.inp}>
-          <label htmlFor="dob" className={classes.lbl}>
-            Date Of Birth 
-          </label>
-          <div className={classes.iconinput}>
-          <FontAwesomeIcon className={classes.calicon} icon="fa fa-calendar" />
-          <input
-            className={classes.c}
-            id="dob"
-            value={dob}
-            type="date"
-            placeholder="Enter your DOB"
-            onChange={dobHandler}
-          ></input>
-          </div>
-          {dobError && <p className={classes.err}>{dobError}</p>}
         </div>
 
-        <div className={classes.btn}>
-          <button className={classes.sub} type="submit">
+        <div className={classes.InputContainer}>
+          <label htmlFor="dob" className={classes.Label}>
+            Date Of Birth
+          </label>
+          <div className={classes.InputWrapper}>
+            <div className={classes.IconInput}>
+              <FontAwesomeIcon className={classes.Icon} icon="fa fa-calendar" />
+              <input
+                className={classes.Input}
+                id="dob"
+                value={dob}
+                type="date"
+                placeholder="Enter your DOB"
+                onChange={dobHandler}
+              ></input>
+            </div>
+            {dobError && (
+              <p className={`${classes.Error} ${classes.errorMsgDob}`}>
+                {dobError}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className={classes.ButtonContainer}>
+          <button className={classes.SubmitButton} type="submit">
             SUBMIT
           </button>
-          <button className={classes.can} type="button" onClick={resetForm}>
+          <button
+            className={classes.CancelButton}
+            type="button"
+            onClick={resetForm}
+          >
             CANCEL
           </button>
         </div>
       </form>
+      <Paper elevation={3} className={classes.TablePaper}>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Sr No</TableCell>
+                <TableCell>First Name</TableCell>
+                <TableCell>MIddle Name</TableCell>
+                <TableCell>Last Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Phone Number</TableCell>
+                <TableCell>Date Of Birth</TableCell>
+                <TableCell>BUTTON</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {formDataList.map((formData, index) => (
+                <TableRow key={index}>
+                  <TableCell>{formData.serialNumber}</TableCell>
+                  <TableCell>{formData.fName}</TableCell>
+                  <TableCell>{formData.mName}</TableCell>
+                  <TableCell>{formData.lName}</TableCell>
+                  <TableCell>{formData.email}</TableCell>
+                  <TableCell>{formData.phoneNo}</TableCell>
+                  <TableCell>{formData.dob}</TableCell>
+                  <TableCell>
+                    <button onClick={() => editRowHandler(index)}>EDIT</button>
+                    <button onClick={() => deleteRowHandler(index)}>
+                      DELETE
+                    </button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
     </div>
   );
 };
